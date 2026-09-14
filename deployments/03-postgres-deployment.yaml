@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tapas-db
+  namespace: tapas
+  labels:
+    app: tapas-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tapas-db
+  template:
+    metadata:
+      labels:
+        app: tapas-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: tapas-db-secret
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "tapas"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "tapas"]
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          volumeMounts:
+            - name: init-sql
+              mountPath: /docker-entrypoint-initdb.d
+            - name: pg-data
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
+      volumes:
+        - name: init-sql
+          configMap:
+            name: tapas-db-init
+        - name: pg-data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tapas-db
+  namespace: tapas
+  labels:
+    app: tapas-db
+spec:
+  selector:
+    app: tapas-db
+  ports:
+    - port: 5432
+      targetPort: 5432

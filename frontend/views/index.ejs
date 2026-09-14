@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Barcelona Tapas Finder</title>
+  <%- include('partials_head') %>
+</head>
+<body>
+  <header>
+    <a href="/"><h1>🍢 Barcelona Tapas Finder</h1></a>
+  </header>
+  <main>
+    <form class="search-form" method="get" action="/">
+      <input type="text" name="q" placeholder="Search by name..." value="<%= q %>">
+      <input type="text" name="neighborhood" placeholder="Neighborhood (e.g. El Born)" value="<%= neighborhood %>">
+      <input type="text" name="food_type" placeholder="Food type (e.g. Seafood Tapas)" value="<%= food_type %>">
+      <button type="submit">Search</button>
+    </form>
+
+    <% if (error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+
+    <% if (restaurants.length === 0 && !error) { %>
+      <p>No restaurants found. Try a different search.</p>
+    <% } %>
+
+    <% restaurants.forEach(function(r) { %>
+      <div class="card">
+        <h2><%= r.name %></h2>
+        <div class="meta">
+          <%= r.neighborhood %> &middot; <%= r.food_type %> &middot; <%= r.price_range || '' %>
+          <% if (r.average_rating) { %>
+            &middot; <span class="rating"><%= r.average_rating %> ★</span>
+          <% } %>
+        </div>
+        <a href="/restaurants/<%= r.id %>">View details &amp; reviews</a>
+      </div>
+    <% }); %>
+  </main>
+</body>
+</html>

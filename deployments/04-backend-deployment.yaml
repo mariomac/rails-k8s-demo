@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tapas-backend
+  namespace: tapas
+  labels:
+    app: tapas-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tapas-backend
+  template:
+    metadata:
+      labels:
+        app: tapas-backend
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: postgres:16-alpine
+          envFrom:
+            - secretRef:
+                name: tapas-db-secret
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h tapas-db -p 5432 -U "$POSTGRES_USER"; do
+                echo "waiting for postgres..."
+                sleep 2
+              done
+      containers:
+        - name: backend
+          image: tapas-backend:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DB_HOST
+              value: tapas-db
+            - name: DB_PORT
+              value: "5432"
+          envFrom:
+            - secretRef:
+                name: tapas-db-secret
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tapas-backend
+  namespace: tapas
+  labels:
+    app: tapas-backend
+spec:
+  selector:
+    app: tapas-backend
+  ports:
+    - port: 3000
+      targetPort: 3000

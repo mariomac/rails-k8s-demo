@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Barcelona Tapas Finder</title>
+  <%- include('partials_head') %>
+</head>
+<body>
+  <header>
+    <a href="/"><h1>🍢 Barcelona Tapas Finder</h1></a>
+  </header>
+  <main>
+    <a class="back-link" href="/">&larr; Back to search</a>
+
+    <% if (error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
+
+    <% if (restaurant) { %>
+      <div class="card detail">
+        <h2><%= restaurant.name %></h2>
+        <div class="meta">
+          <%= restaurant.neighborhood %> &middot; <%= restaurant.food_type %> &middot; <%= restaurant.price_range || '' %>
+          <% if (restaurant.average_rating) { %>
+            &middot; <span class="rating"><%= restaurant.average_rating %> ★</span>
+          <% } %>
+        </div>
+        <p><%= restaurant.description %></p>
+        <p><strong>Address:</strong> <%= restaurant.address %></p>
+      </div>
+
+      <div class="card">
+        <h2>Opinions (<%= restaurant.reviews.length %>)</h2>
+
+        <% if (formError) { %>
+          <div class="error"><%= formError %></div>
+        <% } %>
+
+        <% if (restaurant.reviews.length === 0) { %>
+          <p>No opinions yet. Be the first to share yours!</p>
+        <% } %>
+
+        <% restaurant.reviews.forEach(function(rev) { %>
+          <div class="review">
+            <div class="author"><%= rev.author %> &mdash; <%= rev.rating %> ★</div>
+            <div><%= rev.comment %></div>
+          </div>
+        <% }); %>
+
+        <form class="review-form" method="post" action="/restaurants/<%= restaurant.id %>/reviews">
+          <label>Your name
+            <input type="text" name="author" required>
+          </label>
+          <label>Rating
+            <select name="rating" required>
+              <option value="5">5 - Excellent</option>
+              <option value="4">4 - Good</option>
+              <option value="3">3 - Average</option>
+              <option value="2">2 - Poor</option>
+              <option value="1">1 - Terrible</option>
+            </select>
+          </label>
+          <label>Your opinion
+            <textarea name="comment" rows="3"></textarea>
+          </label>
+          <button type="submit">Post opinion</button>
+        </form>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>

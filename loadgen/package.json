@@ -1,0 +1,9 @@
+{
+  "name": "tapas-finder-loadgen",
+  "version": "1.0.0",
+  "private": true,
+  "main": "loadgen.js",
+  "scripts": {
+    "start": "node loadgen.js"
+  }
+}
