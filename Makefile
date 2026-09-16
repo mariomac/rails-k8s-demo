@@ -41,6 +41,8 @@ down:
 	kubectl delete -f deployments/backend-wildfly/ --ignore-not-found
 	kubectl delete -f deployments/ --ignore-not-found
 
+# Adding here some changes in the base branch, right after other
+# PRs already rely on this commit
 restart: down deploy
 
 logs-backend:
