@@ -18,6 +18,7 @@ endif
 
 .PHONY: build load deploy up down restart logs-backend logs-frontend logs-loadgen
 
+# Some extra comments that are going to be as another stacked PR
 build:
 	docker build -t $(BACKEND_IMAGE) ./$(BACKEND_DIR)
 	docker build -t $(FRONTEND_IMAGE) ./frontend
