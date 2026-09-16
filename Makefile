@@ -46,6 +46,7 @@ down:
 # PRs already rely on this commit
 restart: down deploy
 
+# Blablablabla
 logs-backend:
 	kubectl logs -n $(NAMESPACE) -f deployment/tapas-backend
 
