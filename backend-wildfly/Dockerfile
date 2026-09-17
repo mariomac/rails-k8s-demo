@@ -1,4 +1,4 @@
-FROM maven:3.9-eclipse-temurin-11 AS build
+FROM maven:3.9-eclipse-temurin-21 AS build
 
 WORKDIR /build
 COPY pom.xml ./
@@ -7,7 +7,7 @@ RUN mvn -B -q dependency:go-offline
 COPY src ./src
 RUN mvn -B -q clean package
 
-FROM quay.io/wildfly/wildfly:26.1.3.Final-jdk11
+FROM quay.io/wildfly/wildfly:41.0.1.Final-jdk21
 
 COPY --from=build /build/target/ROOT.war /opt/jboss/wildfly/standalone/deployments/ROOT.war
 
