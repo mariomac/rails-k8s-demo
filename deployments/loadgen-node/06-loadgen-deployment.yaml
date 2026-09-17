@@ -5,6 +5,7 @@ metadata:
   namespace: tapas
   labels:
     app: tapas-loadgen
+    loadgen-variant: node
 spec:
   replicas: 1
   selector:
@@ -14,10 +15,11 @@ spec:
     metadata:
       labels:
         app: tapas-loadgen
+        loadgen-variant: node
     spec:
       containers:
         - name: loadgen
-          image: tapas-loadgen:local
+          image: tapas-loadgen-node:local
           imagePullPolicy: IfNotPresent
           env:
             - name: FRONTEND_URL

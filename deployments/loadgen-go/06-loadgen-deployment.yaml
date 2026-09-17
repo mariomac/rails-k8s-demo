@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tapas-loadgen
+  namespace: tapas
+  labels:
+    app: tapas-loadgen
+    loadgen-variant: go
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tapas-loadgen
+  template:
+    metadata:
+      labels:
+        app: tapas-loadgen
+        loadgen-variant: go
+    spec:
+      containers:
+        - name: loadgen
+          image: tapas-loadgen-go:local
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: FRONTEND_URL
+              value: "http://tapas-frontend:8080"
+            - name: MIN_INTERVAL_MS
+              value: "350"
+            - name: MAX_INTERVAL_MS
+              value: "500"

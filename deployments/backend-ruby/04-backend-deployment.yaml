@@ -31,7 +31,7 @@ spec:
               done
       containers:
         - name: backend
-          image: tapas-backend:local
+          image: tapas-backend-ruby:local
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
